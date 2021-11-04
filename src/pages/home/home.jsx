@@ -3,19 +3,21 @@ import React, { useState, useEffect } from 'react';
 import axios from "axios";
 import InfiniteScroll from "react-infinite-scroll-component";
 
+
+const initialPageState = 1;
+const perPageDefault = 10;
 const Home = () => {
     const [searchValue, setNewSearchValue] = useState('');
     const [imageList, setImageList] = useState([]);
-    const [pages, setPages] = useState(1);
+    const [pages, setPages] = useState(initialPageState);
     useEffect((searchValue, pages) => {
-        getImages(searchValue, pages, true);
+        getImages(searchValue, pages, true, perPageDefault);
     }, [searchValue]);
-    const fetchMoreData = () => {
-        setPages(pages + 1);
-        getImages(searchValue, pages, true);
-    }
+    // const fetchMoreData = () => {
+    //     setPages(pages + 1);
+    //     getImages(searchValue, pages, true);
+    // }
     const addImageToList = (response) => {
-        console.log('addImageToList');
         const imageListIncreased = imageList.concat(response);
         setImageList(imageListIncreased);
     }
@@ -29,13 +31,14 @@ const Home = () => {
         }
 
     }
-    const getImages = (searchValue, pages, infiteScroll) => {
+    const getImages = (searchValue, pages, infiteScroll, perPage) => {
         const parameters = {
             query: searchValue,
+            page: pages,
+            per_page: perPage
         };
         if (searchValue) {
-            parameters.page = 9;
-            console.log('SEARCH');
+            parameters.per_page = 9;
             return axios({
                 method: "GET",
                 url: "https://api.unsplash.com/search/photos",
@@ -46,7 +49,6 @@ const Home = () => {
                     managePhotoResponse(response, infiteScroll);
                 })
         } else {
-            parameters.page = pages;
             return axios({
                 method: "GET",
                 url: "https://api.unsplash.com/photos",
@@ -77,31 +79,30 @@ const Home = () => {
                         </div>
                     </div>
                     <div className="row text-center col-4 offset-4 mb-3 mt-3">
-                        <button onClick={() => getImages(searchValue, 1, false)} type="button" className="btn btn-primary">Buscar</button>
+                        <button onClick={() => getImages(searchValue, 1, false, 10)} type="button" className="btn btn-primary">Buscar</button>
                     </div>
                 </form>
             </nav>
 
             <div className="container">
                 <div className="row">
-                    <InfiniteScroll
+                    {/* <InfiniteScroll
                         dataLength={imageList.length}
                         next={() => fetchMoreData()}
                         hasMore={true}
-                    >
-                        {imageList.map(({
-                            id, urls, alt_description
-                        }, index) => (
-                            <div className="text-center mb-3" key={index + id}>
-                                <img src={urls.small} alt={alt_description} />
-                            </div>
-                        ))}
-                    </InfiniteScroll>
+                    > */}
+                    {imageList.map(({
+                        id, urls, alt_description
+                    }, index) => (
+                        <div className="text-center mb-3" key={index + id}>
+                            <img src={urls.small} alt={alt_description} />
+                        </div>
+                    ))}
+                    {/* </InfiniteScroll> */}
                 </div>
             </div>
 
         </div>
-
     )
 };
 export default Home;
