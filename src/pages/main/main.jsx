@@ -5,7 +5,7 @@ const Main = () => {
     return (
         <main>
             <Switch>
-                <Route exact path="/" component={Home} />
+                <Route exact path="" component={Home} />
             </Switch>
         </main>
     )
