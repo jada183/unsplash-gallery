@@ -71,8 +71,8 @@ const Home = () => {
     const convertISOStringToMonthDay = (date) => {
         const tempDate = new Date(date).toString();
         return tempDate;
-;
-      };
+        ;
+    };
     return (
         <div className="container">
             <nav className="navbar navbar-expand-sm sticky-top navbar-light bg-light">
@@ -86,7 +86,11 @@ const Home = () => {
                                 value={searchValue}
                                 onChange={e => {
                                     setNewSearchValue(e.target.value);
-
+                                }}
+                                onKeyPress={event => {
+                                    if (event.key === 'Enter') {
+                                        getImages(searchValue, 1, false, 9);
+                                    }
                                 }}
                             />
                         </div>
@@ -110,9 +114,9 @@ const Home = () => {
                                     id, urls, alt_description, created_at, likes, description
                                 }, index) => (
                                     <div className="text-center mb-3" key={index + id}>
-                                        <img src={urls.small} alt={alt_description} onClick={() => {
+                                        <img className="image" src={urls.small} alt={alt_description} onClick={() => {
                                             setScrollPosition(window.scrollY);
-                                            setImageSelected({ urls, alt_description, created_at, likes, description});
+                                            setImageSelected({ urls, alt_description, created_at, likes, description });
                                         }} />
                                     </div>
                                 ))}
@@ -127,7 +131,7 @@ const Home = () => {
                         return <div className="container">
                             <div className="row text-center">
                                 <div className="mb-3" >
-                                    <img height="768px" src={imageSelected.urls.regular} onClick={() => {
+                                    <img height="768px" className="image" alt={imageSelected.alt_description} src={imageSelected.urls.regular} onClick={() => {
                                         changeView();
                                         window.scroll(0, scrollPosition);
                                     }} />
