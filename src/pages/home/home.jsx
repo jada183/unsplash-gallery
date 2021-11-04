@@ -38,7 +38,6 @@ const Home = () => {
             per_page: perPage
         };
         if (searchValue) {
-            parameters.per_page = 9;
             return axios({
                 method: "GET",
                 url: "https://api.unsplash.com/search/photos",
@@ -79,7 +78,7 @@ const Home = () => {
                         </div>
                     </div>
                     <div className="row text-center col-4 offset-4 mb-3 mt-3">
-                        <button onClick={() => getImages(searchValue, 1, false, 10)} type="button" className="btn btn-primary">Buscar</button>
+                        <button onClick={() => getImages(searchValue, 1, false, 9)} type="button" className="btn btn-primary">Buscar</button>
                     </div>
                 </form>
             </nav>
