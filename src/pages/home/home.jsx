@@ -4,12 +4,14 @@ import axios from "axios";
 import InfiniteScroll from "react-infinite-scroll-component";
 
 
-const initialPageState = 1;
+// const initialPageState = 1;
 const perPageDefault = 10;
 const Home = () => {
     const [searchValue, setNewSearchValue] = useState('');
     const [imageList, setImageList] = useState([]);
-    const [pages, setPages] = useState(initialPageState);
+    // const [pages, setPages] = useState(initialPageState);
+    const [imageSelected, setImageSelected] = useState('');
+    const [scrollPosition, setScrollPosition] = useState(0);
     useEffect((searchValue, pages) => {
         getImages(searchValue, pages, true, perPageDefault);
     }, [searchValue]);
@@ -17,6 +19,9 @@ const Home = () => {
     //     setPages(pages + 1);
     //     getImages(searchValue, pages, true);
     // }
+    useEffect((imageSelected) => {
+        window.scroll(0, scrollPosition);
+    }, [imageSelected]);
     const addImageToList = (response) => {
         const imageListIncreased = imageList.concat(response);
         setImageList(imageListIncreased);
@@ -25,12 +30,16 @@ const Home = () => {
         if (infiteScroll) {
             addImageToList(response);
         } else {
-            setPages(0);
+            // setPages(0);
             window.scroll(0, 0);
             setImageList(response);
         }
 
     }
+    const changeView = () => {
+        setImageSelected('');
+    }
+
     const getImages = (searchValue, pages, infiteScroll, perPage) => {
         const parameters = {
             query: searchValue,
@@ -59,6 +68,11 @@ const Home = () => {
                 })
         }
     };
+    const convertISOStringToMonthDay = (date) => {
+        const tempDate = new Date(date).toString();
+        return tempDate;
+;
+      };
     return (
         <div className="container">
             <nav className="navbar navbar-expand-sm sticky-top navbar-light bg-light">
@@ -68,7 +82,7 @@ const Home = () => {
                             <input type="text"
                                 id="search-text"
                                 className="form-control"
-                                placeholder="Añade un filtro de busqueda"
+                                placeholder="Add search filter"
                                 value={searchValue}
                                 onChange={e => {
                                     setNewSearchValue(e.target.value);
@@ -78,29 +92,60 @@ const Home = () => {
                         </div>
                     </div>
                     <div className="row text-center col-4 offset-4 mb-3 mt-3">
-                        <button onClick={() => getImages(searchValue, 1, false, 9)} type="button" className="btn btn-primary">Buscar</button>
+                        <button onClick={() => getImages(searchValue, 1, false, 9)} type="button" className="btn btn-primary">Search</button>
                     </div>
                 </form>
             </nav>
-
-            <div className="container">
-                <div className="row">
-                    {/* <InfiniteScroll
-                        dataLength={imageList.length}
-                        next={() => fetchMoreData()}
-                        hasMore={true}
-                    > */}
-                    {imageList.map(({
-                        id, urls, alt_description
-                    }, index) => (
-                        <div className="text-center mb-3" key={index + id}>
-                            <img src={urls.small} alt={alt_description} />
+            {(
+                () => {
+                    if (!imageSelected) {
+                        return <div className="container">
+                            <div className="row">
+                                {/* <InfiniteScroll
+                                dataLength={imageList.length}
+                                next={() => fetchMoreData()}
+                                hasMore={true}
+                            > */}
+                                {imageList.map(({
+                                    id, urls, alt_description, created_at, likes, description
+                                }, index) => (
+                                    <div className="text-center mb-3" key={index + id}>
+                                        <img src={urls.small} alt={alt_description} onClick={() => {
+                                            setScrollPosition(window.scrollY);
+                                            setImageSelected({ urls, alt_description, created_at, likes, description});
+                                        }} />
+                                    </div>
+                                ))}
+                                {/* </InfiniteScroll> */}
+                            </div>
                         </div>
-                    ))}
-                    {/* </InfiniteScroll> */}
-                </div>
-            </div>
-
+                    }
+                })()}
+            {(
+                () => {
+                    if (imageSelected) {
+                        return <div className="container">
+                            <div className="row text-center">
+                                <div className="mb-3" >
+                                    <img height="768px" src={imageSelected.urls.regular} onClick={() => {
+                                        changeView();
+                                        window.scroll(0, scrollPosition);
+                                    }} />
+                                </div>
+                            </div>
+                            <div className="row text-center">
+                                <strong>Creation at</strong>
+                                <span>{convertISOStringToMonthDay(imageSelected.created_at)}</span>
+                            </div>
+                            <div className="row text-center">
+                                <span><strong>Likes: </strong><span>{imageSelected.likes}</span></span>
+                            </div>
+                            <div className="row text-center">
+                                <span><strong>description: </strong><span>{imageSelected.description}</span></span>
+                            </div>
+                        </div>
+                    }
+                })()}
         </div>
     )
 };
