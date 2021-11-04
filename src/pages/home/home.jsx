@@ -7,25 +7,22 @@ const Home = () => {
     const [searchValue, setNewSearchValue] = useState('');
     const [imageList, setImageList] = useState([]);
     const [pages, setPages] = useState(1);
-
     useEffect((searchValue, pages) => {
         getImages(searchValue, pages, true);
-    }, []);
+    }, [searchValue]);
     const fetchMoreData = () => {
         setPages(pages + 1);
         getImages(searchValue, pages, true);
     }
     const addImageToList = (response) => {
-        console.log('imageList', imageList);
+        console.log('addImageToList');
         const imageListIncreased = imageList.concat(response);
-        console.log('imageListIncreased', imageListIncreased);
         setImageList(imageListIncreased);
     }
     const managePhotoResponse = (response, infiteScroll) => {
         if (infiteScroll) {
             addImageToList(response);
         } else {
-            console.log('setImageList');
             setPages(0);
             window.scroll(0, 0);
             setImageList(response);
@@ -36,7 +33,7 @@ const Home = () => {
         const parameters = {
             query: searchValue,
         };
-        if (searchValue && !infiteScroll) {
+        if (searchValue) {
             parameters.page = 9;
             console.log('SEARCH');
             return axios({
@@ -100,9 +97,6 @@ const Home = () => {
                             </div>
                         ))}
                     </InfiniteScroll>
-
-
-
                 </div>
             </div>
 
