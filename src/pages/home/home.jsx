@@ -14,7 +14,7 @@ const Home = () => {
     const [scrollPosition, setScrollPosition] = useState(0);
     useEffect((searchValue, pages) => {
         getImages(searchValue, pages, true, perPageDefault);
-    }, [searchValue]);
+    }, []);
     // const fetchMoreData = () => {
     //     setPages(pages + 1);
     //     getImages(searchValue, pages, true);
